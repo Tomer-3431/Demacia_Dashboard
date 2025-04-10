@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class Sidebar extends StatelessWidget {
-  const Sidebar({
+class SideBar extends StatelessWidget {
+  const SideBar({
     super.key
   });
 

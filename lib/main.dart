@@ -1,4 +1,4 @@
-import 'package:demacia_dashboard/bar/sidebar.dart';
+import 'package:demacia_dashboard/bar/side_bar.dart';
 import 'package:demacia_dashboard/bar/top_bar.dart';
 import 'package:demacia_dashboard/home/home_page.dart';
 import 'package:demacia_dashboard/home/test_page.dart';
@@ -59,7 +59,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: TopBar(),
-    drawer: Sidebar(),
+    drawer: SideBar(),
     body: Row(
       children: [
         Container(
@@ -92,9 +92,7 @@ class _HomeState extends State<Home> {
       iconColor: Colors.white,
       selectedColor: Colors.amber,
       selected: screenIndex == screen,
-      onTap: () {
-        screenIndex = screen;
-      },
+      onTap: () => setState(() => screenIndex = screen),
     );
   }
 }
