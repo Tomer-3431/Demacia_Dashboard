@@ -22,11 +22,21 @@ class SideBar extends StatelessWidget {
       child: ListView(
         children: [
           DrawerHeader(
-            // margin: EdgeInsets.zero,
+            padding: const EdgeInsets.fromLTRB(
+              16, 48, 16, 8
+            ),
             decoration: BoxDecoration(
               color: Colors.purple
             ),
-            child: Text("Drawer Header"),
+            child: Text(
+              "Menu",
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 30
+              ),
+            ),
           ),
           SizedBox(
             height: ((MediaQuery.sizeOf(context).height - 169 - 114) - 64 * listTileList.length) / 2,
