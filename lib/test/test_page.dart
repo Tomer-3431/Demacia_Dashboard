@@ -6,7 +6,9 @@ class TestPage extends Screen {
     super.key,
     required super.screenIndex,
   }) : super(
-    iconData: Icons.science_outlined 
+    iconUnselected: Icons.science_outlined,
+    iconSelected: Icons.science,
+    screenName: "Test Page"
   );
 
   @override

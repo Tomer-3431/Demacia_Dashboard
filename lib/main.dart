@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:demacia_dashboard/bar/side_bar.dart';
 import 'package:demacia_dashboard/bar/top_bar.dart';
 import 'package:demacia_dashboard/home/home_page.dart';
@@ -40,9 +42,7 @@ class MyApp extends StatelessWidget {
 }
 
 class Home extends StatefulWidget {
-  const Home({
-    super.key,
-  });
+  const Home({super.key});
 
   @override
   State<Home> createState() => _HomeState();
@@ -54,42 +54,83 @@ class _HomeState extends State<Home> {
   List<Screen> screens = <Screen>[
     HomePage(),
     TestPage(screenIndex: 1),
-    TestPage(screenIndex: 2)
+    TestPage(screenIndex: 2),
   ];
 
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: TopBar(),
-    drawer: SideBar(),
+    drawer: SideBar(
+      width: getSideBarWidth() * 3,
+      listTileList: screens.map((Screen screen) => listIcons(screen, true)).toList(),
+    ),
+    backgroundColor: Colors.black,
     body: Row(
       children: [
-        Container(
-          height: MediaQuery.sizeOf(context).height,
-          width: 100,
-          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 0),
-          color: Colors.deepPurple,
+        Drawer(
+          width: getSideBarWidth(),
+          backgroundColor: Colors.deepPurple,
+          shape: RoundedRectangleBorder(
+            borderRadius: const BorderRadiusDirectional.horizontal(
+              end: Radius.circular(16),
+            ),
+          ),
           child: Center(
             child: ListView(
               shrinkWrap: true,
-              children: screens.map((Screen screen) => listIcons(screen)).toList(),
+              children:
+                  screens.map((Screen screen) => listIcons(screen, false)).toList(),
             ),
           ),
         ),
-        Flexible(
-          flex: 1,
-          child: screens[screenIndex],
-        )
+        Flexible(flex: 2, child: screens[screenIndex]),
       ],
     ),
   );
 
-  ListTile listIcons(Screen screen) {
-    return ListTile(
-      title: Icon(screen.iconData),
-      iconColor: Colors.white,
-      selectedColor: Colors.amber,
-      selected: screenIndex == screen.screenIndex,
-      onTap: () => setState(() => screenIndex = screen.screenIndex),
+  ListTile listIcons(Screen screen, bool isOpen) => ListTile(
+    minVerticalPadding: 20,
+    title: isOpen
+    ? Row(
+      children: [
+        Icon(
+          screenIndex == screen.screenIndex
+              ? screen.iconSelected
+              : screen.iconUnselected,
+        ),
+        SizedBox(
+          width: 10,
+        ),
+        Text(
+          screen.screenName,
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: screenIndex == screen.screenIndex
+              ? FontWeight.bold
+              : FontWeight.normal
+          ),
+        )
+      ],
+    )
+    : Icon(
+      screenIndex == screen.screenIndex
+        ? screen.iconSelected
+        : screen.iconUnselected,
+    ),
+    iconColor: Colors.white,
+    selectedColor: Colors.amber,
+    selected: screenIndex == screen.screenIndex,
+    onTap: () => setState(() => screenIndex = screen.screenIndex),
+  );
+
+  double getSideBarWidth() {
+    const double minWidth = 60;
+    const double maxWidth = 80;
+
+    return clampDouble(
+      MediaQuery.sizeOf(context).width / 20,
+      minWidth,
+      maxWidth,
     );
   }
 }

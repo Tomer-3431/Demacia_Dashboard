@@ -6,7 +6,9 @@ class HomePage extends Screen {
     super.key,
   }): super(
     screenIndex: 0,
-    iconData: Icons.home
+    iconUnselected: Icons.home_outlined,
+    iconSelected: Icons.home,
+    screenName: "Home Page"
   );
 
   @override

@@ -4,8 +4,12 @@ abstract class Screen extends StatefulWidget {
   const Screen({
     super.key,
     required this.screenIndex,
-    required this.iconData,
+    required this.iconUnselected,
+    required this.iconSelected,
+    required this.screenName,
   });
   final int screenIndex;
-  final IconData iconData;
+  final IconData iconUnselected;
+  final IconData iconSelected;
+  final String screenName;
 }
