@@ -1,9 +1,13 @@
+import 'package:demacia_dashboard/screen.dart';
 import 'package:flutter/material.dart';
 
-class TestPage extends StatefulWidget {
+class TestPage extends Screen {
   const TestPage({
     super.key,
-  });
+    required super.screenIndex,
+  }) : super(
+    iconData: Icons.science_outlined 
+  );
 
   @override
   State<TestPage> createState() => _TestPageState();

@@ -2,6 +2,7 @@ import 'package:demacia_dashboard/bar/side_bar.dart';
 import 'package:demacia_dashboard/bar/top_bar.dart';
 import 'package:demacia_dashboard/home/home_page.dart';
 import 'package:demacia_dashboard/home/test_page.dart';
+import 'package:demacia_dashboard/screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -50,10 +51,10 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int screenIndex = 0;
 
-  List<Widget> screens = <Widget>[
+  List<Screen> screens = <Screen>[
     HomePage(),
-    TestPage(),
-    TestPage(),
+    TestPage(screenIndex: 1),
+    TestPage(screenIndex: 2)
   ];
 
   @override
@@ -70,11 +71,7 @@ class _HomeState extends State<Home> {
           child: Center(
             child: ListView(
               shrinkWrap: true,
-              children: [
-                listIcons(Icons.looks_one, 0),
-                listIcons(Icons.looks_two, 1),
-                listIcons(Icons.looks_3, 2),
-              ],
+              children: screens.map((Screen screen) => listIcons(screen)).toList(),
             ),
           ),
         ),
@@ -86,13 +83,13 @@ class _HomeState extends State<Home> {
     ),
   );
 
-  ListTile listIcons(IconData icon, int screen) {
+  ListTile listIcons(Screen screen) {
     return ListTile(
-      title: Icon(icon),
+      title: Icon(screen.iconData),
       iconColor: Colors.white,
       selectedColor: Colors.amber,
-      selected: screenIndex == screen,
-      onTap: () => setState(() => screenIndex = screen),
+      selected: screenIndex == screen.screenIndex,
+      onTap: () => setState(() => screenIndex = screen.screenIndex),
     );
   }
 }

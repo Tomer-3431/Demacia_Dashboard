@@ -1,9 +1,13 @@
+import 'package:demacia_dashboard/screen.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends Screen {
   const HomePage({
     super.key,
-  });
+  }): super(
+    screenIndex: 0,
+    iconData: Icons.home
+  );
 
   @override
   State<HomePage> createState() => _HomePageState();
