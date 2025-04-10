@@ -7,10 +7,10 @@ class TopBar extends AppBar {
   });
 
   @override
-  final bool centerTitle = true;
+  bool get centerTitle => true;
 
   @override
-  final Widget title = Text(
+  Widget get title => Text(
     "Demacia Dashboard",
     style: TextStyle(
       color: Colors.white,
@@ -19,10 +19,10 @@ class TopBar extends AppBar {
   );
 
   @override
-  final Color backgroundColor = Colors.purple;
+  Color get backgroundColor => Colors.purple;
   
   @override
-  final Widget leading = Builder(
+  Widget get leading => Builder(
     builder: (BuildContext context) => IconButton(
       onPressed: () => Scaffold.of(context).openDrawer(),
       icon: Icon(
