@@ -1,4 +1,4 @@
-import 'package:demacia_dashboard/screen.dart';
+import 'package:demacia_dashboard/utils/screen.dart';
 import 'package:flutter/material.dart';
 
 class TestPage extends Screen {

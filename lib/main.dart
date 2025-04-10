@@ -1,10 +1,10 @@
 import 'dart:ui';
 
-import 'package:demacia_dashboard/bar/side_bar.dart';
-import 'package:demacia_dashboard/bar/top_bar.dart';
+import 'package:demacia_dashboard/utils/side_bar.dart';
+import 'package:demacia_dashboard/utils/top_bar.dart';
 import 'package:demacia_dashboard/home/home_page.dart';
 import 'package:demacia_dashboard/test/test_page.dart';
-import 'package:demacia_dashboard/screen.dart';
+import 'package:demacia_dashboard/utils/screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
