@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:demacia_dashboard/nt_widgets/nt_screen.dart';
 import 'package:demacia_dashboard/utils/side_bar.dart';
 import 'package:demacia_dashboard/utils/top_bar.dart';
 import 'package:demacia_dashboard/home/home_page.dart';
@@ -53,7 +54,7 @@ class _HomeState extends State<Home> {
 
   List<Screen> screens = <Screen>[
     HomePage(),
-    TestPage(screenIndex: 1),
+    NtScreen(),
     TestPage(screenIndex: 2),
   ];
 
