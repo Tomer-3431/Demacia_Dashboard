@@ -1,3 +1,4 @@
+import 'package:demacia_dashboard/nt_widgets/widgets/number_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -7,21 +8,30 @@ class NtTopic {
     required this.directory,
     required this.type,
     required this.id,
+    required this.onDrop,
+    required this.data,
+    required this.size,
   });
 
   final String name;
   final String directory;
   final Type type;
   final int id;
+  final dynamic data;
+  final void Function(Offset position, dynamic data) onDrop;
+  final double size;
 
-
-  Widget build(BuildContext context) => ListTile(
-    title: Text(
-      name,
-      textDirection: TextDirection.rtl,
-      style: TextStyle(
-        // color: getColorByType()
+  Widget build(BuildContext context) => Draggable<double>(
+    data: data,
+    feedback: NumberWidget(size: size, number: data),
+    childWhenDragging: Opacity(
+      opacity: 0.3,
+      child: ListTile(
+        title: Text(name, textDirection: TextDirection.rtl, style: TextStyle()),
       ),
+    ),
+    child: ListTile(
+      title: Text(name, textDirection: TextDirection.rtl, style: TextStyle()),
     ),
   );
 

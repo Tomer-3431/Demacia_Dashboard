@@ -63,7 +63,8 @@ class _HomeState extends State<Home> {
     appBar: TopBar(),
     drawer: SideBar(
       width: getSideBarWidth() * 3,
-      listTileList: screens.map((Screen screen) => listIcons(screen, true)).toList(),
+      listTileList:
+          screens.map((Screen screen) => listIcons(screen, true)).toList(),
     ),
     backgroundColor: Colors.black,
     body: Row(
@@ -80,7 +81,9 @@ class _HomeState extends State<Home> {
             child: ListView(
               shrinkWrap: true,
               children:
-                  screens.map((Screen screen) => listIcons(screen, false)).toList(),
+                  screens
+                      .map((Screen screen) => listIcons(screen, false))
+                      .toList(),
             ),
           ),
         ),
@@ -91,33 +94,33 @@ class _HomeState extends State<Home> {
 
   ListTile listIcons(Screen screen, bool isOpen) => ListTile(
     minVerticalPadding: 20,
-    title: isOpen
-    ? Row(
-      children: [
-        Icon(
-          screenIndex == screen.screenIndex
-              ? screen.iconSelected
-              : screen.iconUnselected,
-        ),
-        SizedBox(
-          width: 10,
-        ),
-        Text(
-          screen.screenName,
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: screenIndex == screen.screenIndex
-              ? FontWeight.bold
-              : FontWeight.normal
-          ),
-        )
-      ],
-    )
-    : Icon(
-      screenIndex == screen.screenIndex
-        ? screen.iconSelected
-        : screen.iconUnselected,
-    ),
+    title:
+        isOpen
+            ? Row(
+              children: [
+                Icon(
+                  screenIndex == screen.screenIndex
+                      ? screen.iconSelected
+                      : screen.iconUnselected,
+                ),
+                SizedBox(width: 10),
+                Text(
+                  screen.screenName,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight:
+                        screenIndex == screen.screenIndex
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                  ),
+                ),
+              ],
+            )
+            : Icon(
+              screenIndex == screen.screenIndex
+                  ? screen.iconSelected
+                  : screen.iconUnselected,
+            ),
     iconColor: Colors.white,
     selectedColor: Colors.amber,
     selected: screenIndex == screen.screenIndex,

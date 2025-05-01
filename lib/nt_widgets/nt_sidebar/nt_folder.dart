@@ -1,4 +1,3 @@
-
 import 'package:demacia_dashboard/nt_widgets/nt_topic.dart';
 import 'package:flutter/material.dart';
 
@@ -9,11 +8,7 @@ class Folder extends StatelessWidget {
   List<Folder> subFolders = [];
   List<NtTopic> files = [];
 
-  Folder({
-    super.key,
-    required this.name,
-    this.spaces = 0,
-  });
+  Folder({super.key, required this.name, this.spaces = 0});
 
   void sort() {
     subFolders.sort((a, b) => a.name.compareTo(b.name));
@@ -25,7 +20,7 @@ class Folder extends StatelessWidget {
     sort();
 
     return AnimatedMenuTile(
-      title: name, 
+      title: name,
       spaces: spaces,
       children: [
         ...subFolders,
@@ -64,12 +59,10 @@ class _AnimatedMenuTileState extends State<AnimatedMenuTile>
       duration: const Duration(milliseconds: 200),
       vsync: this,
     );
-    _iconTurns = Tween<double>(begin: 0.0, end: 0.5).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeInOut,
-      ),
-    );
+    _iconTurns = Tween<double>(
+      begin: 0.0,
+      end: 0.5,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -88,11 +81,15 @@ class _AnimatedMenuTileState extends State<AnimatedMenuTile>
       }
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 2),
-      margin: EdgeInsets.symmetric(vertical: 5, horizontal: widget.spaces == 0 ? 20 : 0),
+      margin: EdgeInsets.symmetric(
+        vertical: 5,
+        horizontal: widget.spaces == 0 ? 20 : 0,
+      ),
       child: Column(
         children: [
           InkWell(
@@ -103,10 +100,7 @@ class _AnimatedMenuTileState extends State<AnimatedMenuTile>
                 Expanded(
                   child: Text(
                     widget.title,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     textDirection: TextDirection.rtl,
                   ),
                 ),
@@ -121,9 +115,14 @@ class _AnimatedMenuTileState extends State<AnimatedMenuTile>
           ),
           AnimatedCrossFade(
             duration: const Duration(milliseconds: 200),
-            crossFadeState: _isExpanded ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+            crossFadeState:
+                _isExpanded
+                    ? CrossFadeState.showFirst
+                    : CrossFadeState.showSecond,
             firstChild: Padding(
-              padding: EdgeInsets.only(right: widget.spaces * 16.0 + 12.0), // More padding for nested items
+              padding: EdgeInsets.only(
+                right: widget.spaces * 16.0 + 12.0,
+              ), // More padding for nested items
               child: Container(
                 alignment: Alignment.centerRight,
                 decoration: BoxDecoration(

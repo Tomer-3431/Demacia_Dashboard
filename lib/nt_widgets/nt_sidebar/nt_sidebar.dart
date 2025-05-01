@@ -3,10 +3,7 @@ import 'package:demacia_dashboard/nt_widgets/nt_topic.dart';
 import 'package:flutter/material.dart';
 
 class NtSidebar extends StatefulWidget {
-  const NtSidebar({
-    super.key,
-    required this.topics,
-  });
+  const NtSidebar({super.key, required this.topics});
 
   @override
   State<NtSidebar> createState() => _NtSidebarState();
@@ -15,7 +12,6 @@ class NtSidebar extends StatefulWidget {
 }
 
 class _NtSidebarState extends State<NtSidebar> {
-
   bool isOpen = true;
 
   @override
@@ -27,41 +23,38 @@ class _NtSidebarState extends State<NtSidebar> {
 
   @override
   Widget build(BuildContext context) => Container(
-    width: isOpen
-    ? 300
-    : 50,
+    width: isOpen ? 300 : 50,
     decoration: BoxDecoration(
       color: Colors.purpleAccent.shade100,
       borderRadius: const BorderRadiusDirectional.horizontal(
         end: Radius.circular(8),
-      ).resolve(TextDirection.rtl)
+      ).resolve(TextDirection.rtl),
     ),
 
-    child: isOpen
-    ? Column(
-      children: [
-        Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              children: getTopics(Folder(name: "root"))
+    child:
+        isOpen
+            ? Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(children: getTopics(Folder(name: "root"))),
+                  ),
+                ),
+
+                ListTile(
+                  title: Icon(Icons.keyboard_double_arrow_right),
+                  onTap: () => setState(() => isOpen = !isOpen),
+                ),
+              ],
             )
-          )
-        ),
-    
-        ListTile(
-          title: Icon(Icons.keyboard_double_arrow_right),
-          onTap: () => setState(() => isOpen = !isOpen),
-        )
-      ],
-    )
-    : Center(
-      child: Expanded(
-        child: ListTile(
-          title: Icon(Icons.keyboard_double_arrow_left),
-          onTap: () => setState(() => isOpen = !isOpen),
-        ),
-      ),
-    ),
+            : Center(
+              child: Expanded(
+                child: ListTile(
+                  title: Icon(Icons.keyboard_double_arrow_left),
+                  onTap: () => setState(() => isOpen = !isOpen),
+                ),
+              ),
+            ),
   );
 
   List<Widget> getTopics(Folder root) {
@@ -72,7 +65,10 @@ class _NtSidebarState extends State<NtSidebar> {
 
       for (int i = 0; i < parts.length; i++) {
         final String part = parts[i];
-        final Folder? folderIfExisting = current.subFolders.where((Folder folder) => folder.name == part).firstOrNull;
+        final Folder? folderIfExisting =
+            current.subFolders
+                .where((Folder folder) => folder.name == part)
+                .firstOrNull;
 
         if (folderIfExisting != null) {
           current = folderIfExisting;
@@ -83,7 +79,6 @@ class _NtSidebarState extends State<NtSidebar> {
           current = newNode;
           spaces++;
         }
-        
       }
       current.files.add(topic);
     }
@@ -91,7 +86,7 @@ class _NtSidebarState extends State<NtSidebar> {
     root.sort();
     return [
       ...root.subFolders,
-      ...root.files.map((file) => file.build(context))
+      ...root.files.map((file) => file.build(context)),
     ];
   }
 }
