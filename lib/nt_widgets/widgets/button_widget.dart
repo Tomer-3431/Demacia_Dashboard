@@ -13,13 +13,39 @@ class ButtonWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-    onTap: onTap,
-    child: Container(
-      height: size,
-      width: size,
-      color: Colors.white,
-      child: Center(child: Text(name, style: TextStyle(color: Colors.black))),
+  Widget build(BuildContext context) => Container(
+    decoration: BoxDecoration(
+      color: Colors.grey[850],
+      borderRadius: BorderRadius.circular(16),
+    ),
+    height: size,
+    width: size,
+    child: GestureDetector(
+      onTap: onTap,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: Center(
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.purple,
+                width: 1.5,
+              ),
+              borderRadius: BorderRadius.circular(32),
+            ),
+            width: size * 0.85,
+            height: size * 0.45,
+            child: Center(
+              child: Text(
+                name, 
+                style: TextStyle(
+                  color: Colors.white
+                )
+              )
+            ),
+          ),
+        ),
+      ),
     ),
   );
 }

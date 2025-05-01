@@ -15,7 +15,7 @@ class NtScreen extends Screen {
         screenName: "Network Tables",
       );
 
-  final double size = 100;
+  final double size = 96;
 
   @override
   State<NtScreen> createState() => _NtScreenState();
@@ -24,7 +24,7 @@ class NtScreen extends Screen {
 class _NtScreenState extends State<NtScreen> {
   List<DraggableWidget> placedWidgets = [];
 
-  void handleDrop(Offset globalPosition, dynamic data) {
+  void handleDrop(Offset globalPosition, NtTopic data) {
     final RenderBox box = context.findRenderObject() as RenderBox;
     Offset localPos = box.globalToLocal(globalPosition);
     localPos /= widget.size;
@@ -38,7 +38,11 @@ class _NtScreenState extends State<NtScreen> {
         DraggableWidget(
           initPositon: localPos,
           size: widget.size,
-          child: NumberWidget(number: data, size: widget.size),
+          child: NumberWidget(
+            number: data.data, 
+            size: widget.size,
+            title: data.name,
+          ),
         ),
       );
     });
@@ -63,7 +67,11 @@ class _NtScreenState extends State<NtScreen> {
             DraggableWidget(
               size: widget.size,
               initPositon: Offset(5, 5),
-              child: NumberWidget(number: 20, size: widget.size),
+              child: NumberWidget(
+                number: 20, 
+                size: widget.size,
+                title: "test",
+              ),
             ),
 
             DraggableWidget(
@@ -76,7 +84,7 @@ class _NtScreenState extends State<NtScreen> {
               ),
             ),
 
-            DragTarget<double>(
+            DragTarget<NtTopic>(
               onWillAcceptWithDetails: (data) => true,
               onAcceptWithDetails: (details) {
                 final RenderBox box = context.findRenderObject() as RenderBox;
@@ -93,8 +101,9 @@ class _NtScreenState extends State<NtScreen> {
                       initPositon: localPos,
                       size: widget.size,
                       child: NumberWidget(
-                        number: details.data,
+                        number: details.data.data,
                         size: widget.size,
+                        title: details.data.name,
                       ),
                     ),
                   );

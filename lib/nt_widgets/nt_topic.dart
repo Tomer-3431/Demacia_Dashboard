@@ -1,5 +1,6 @@
 import 'package:demacia_dashboard/nt_widgets/widgets/number_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 class NtTopic {
@@ -18,12 +19,16 @@ class NtTopic {
   final Type type;
   final int id;
   final dynamic data;
-  final void Function(Offset position, dynamic data) onDrop;
+  final void Function(Offset position, NtTopic data) onDrop;
   final double size;
 
-  Widget build(BuildContext context) => Draggable<double>(
-    data: data,
-    feedback: NumberWidget(size: size, number: data),
+  Widget build(BuildContext context) => Draggable<NtTopic>(
+    data: this,
+    feedback: NumberWidget(
+      size: size, 
+      number: data,
+      title: name,
+    ),
     childWhenDragging: Opacity(
       opacity: 0.3,
       child: ListTile(
