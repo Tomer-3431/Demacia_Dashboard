@@ -7,13 +7,16 @@ import 'package:demacia_dashboard/home/home_page.dart';
 import 'package:demacia_dashboard/test/test_page.dart';
 import 'package:demacia_dashboard/utils/screen.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({
+    super.key,
+  });
 
   // This widget is the root of your application.
   @override
@@ -38,12 +41,14 @@ class MyApp extends StatelessWidget {
       // tested with just a hot reload.
       colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
     ),
-    home: Home(),
+    home: const Home(),
   );
 }
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  const Home({
+    super.key,
+  });
 
   @override
   State<Home> createState() => _HomeState();
@@ -57,6 +62,24 @@ class _HomeState extends State<Home> {
     NtScreen(),
     TestPage(screenIndex: 2),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    getScreenToPrevios();
+  }
+
+  Future<void> getScreenToPrevios() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      screenIndex = prefs.getInt("screenIndex") ?? 0;
+    });
+  }
+
+  Future<void> setScreenData(int screenIndex) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt("screenIndex", screenIndex);
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -124,7 +147,10 @@ class _HomeState extends State<Home> {
     iconColor: Colors.white,
     selectedColor: Colors.amber,
     selected: screenIndex == screen.screenIndex,
-    onTap: () => setState(() => screenIndex = screen.screenIndex),
+    onTap: () {
+      setState(() => screenIndex = screen.screenIndex);
+      setScreenData(screenIndex);
+    },
   );
 
   double getSideBarWidth() {

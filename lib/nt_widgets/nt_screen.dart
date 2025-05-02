@@ -6,6 +6,7 @@ import 'package:demacia_dashboard/nt_widgets/widgets/name_widget.dart';
 import 'package:demacia_dashboard/nt_widgets/widgets/number_widget.dart';
 import 'package:demacia_dashboard/utils/screen.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NtScreen extends Screen {
   const NtScreen({super.key})
@@ -25,28 +26,29 @@ class NtScreen extends Screen {
 class _NtScreenState extends State<NtScreen> {
   List<DraggableWidget> placedWidgets = [];
   Offset widgetPos = Offset(5, 5);
+  int currentId = 0;
 
-  void handleDrop(Offset globalPosition, NtTopic data) {
-    final RenderBox box = context.findRenderObject() as RenderBox;
-    Offset localPos = box.globalToLocal(globalPosition);
-    localPos /= widget.size;
-    localPos = Offset(
-      localPos.dx.round().toDouble().clamp(0, 14 * widget.size),
-      localPos.dy.round().toDouble().clamp(0, 8 * widget.size),
-    );
+  @override
+  void initState() {
+    super.initState();
 
+    getCurrentId();
+    getWidgetPos();
+  }
+
+  void getWidgetPos() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    double x = prefs.getDouble("NT.1.x") ?? 5 * widget.size;
+    double y = prefs.getDouble("NT.1.y") ?? 5 * widget.size;
     setState(() {
-      placedWidgets.add(
-        DraggableWidget(
-          initPositon: localPos,
-          size: widget.size,
-          child: NumberWidget(
-            number: data.data, 
-            size: widget.size,
-            title: data.name,
-          ),
-        ),
-      );
+      widgetPos = Offset(x, y) / widget.size;
+    });
+  }
+
+  void getCurrentId() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      currentId = prefs.getInt("NT.id") ?? 0;
     });
   }
 
@@ -67,6 +69,7 @@ class _NtScreenState extends State<NtScreen> {
             ...rowAndColumnsNumbers(context, widget.size),
 
             DraggableWidget(
+              id: 1,
               size: widget.size,
               initPositon: Offset(5, 5),
               whenPosChange: (pos) => setState(() => widgetPos = pos / widget.size),
@@ -78,8 +81,9 @@ class _NtScreenState extends State<NtScreen> {
             ),
 
             DraggableWidget(
+              id: 2,
               size: widget.size,
-              initPositon: Offset(2, 8),
+              initPositon: Offset(8, 2),
               child: ButtonWidget(
                 title: "Clear Topic Widgets",
                 size: widget.size,
@@ -95,13 +99,14 @@ class _NtScreenState extends State<NtScreen> {
                 Offset localPos = box.globalToLocal(details.offset);
                 localPos /= widget.size;
                 localPos = Offset(
-                  localPos.dx.round().toDouble().clamp(0, 14 * widget.size),
-                  localPos.dy.round().toDouble().clamp(0, 8 * widget.size),
+                  localPos.dx.round().toDouble().clamp(0, 14),
+                  localPos.dy.round().toDouble().clamp(0, 8),
                 );
 
                 setState(() {
                   placedWidgets.add(
                     DraggableWidget(
+                      id: ++currentId,
                       initPositon: localPos,
                       size: widget.size,
                       child: NumberWidget(
@@ -129,7 +134,6 @@ class _NtScreenState extends State<NtScreen> {
             directory: "folder",
             type: int,
             id: 0,
-            onDrop: handleDrop,
             data: 0.0,
             size: widget.size,
           ),
@@ -138,7 +142,6 @@ class _NtScreenState extends State<NtScreen> {
             directory: "secondfolder/apple",
             type: int,
             id: 1,
-            onDrop: handleDrop,
             data: 1.0,
             size: widget.size,
           ),
@@ -147,7 +150,6 @@ class _NtScreenState extends State<NtScreen> {
             directory: "folder/apple",
             type: int,
             id: 2,
-            onDrop: handleDrop,
             data: 2.0,
             size: widget.size,
           ),
@@ -156,7 +158,6 @@ class _NtScreenState extends State<NtScreen> {
             directory: "folder/apple",
             type: int,
             id: 3,
-            onDrop: handleDrop,
             data: 3.0,
             size: widget.size,
           ),

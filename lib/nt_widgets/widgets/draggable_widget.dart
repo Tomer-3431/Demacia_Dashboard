@@ -1,15 +1,17 @@
 import 'package:demacia_dashboard/nt_widgets/widgets/nt_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DraggableWidget extends StatefulWidget {
   final double size;
   final Offset initPositon;
   final NtWidget child;
   final void Function(Offset pos) whenPosChange;
+  final int id;
 
   const DraggableWidget({
     super.key,
+    required this.id,
     required this.size,
     required this.initPositon,
     required this.child,
@@ -31,9 +33,35 @@ class _DraggableWidgetState extends State<DraggableWidget> {
   @override
   void initState() {
     super.initState();
+
+    print(widget.id);
+    updateId();
+    
     positon = widget.initPositon * widget.size;
     width = widget.size;
     height = widget.size;
+    getFromPrefrence();  
+  }
+
+  void getFromPrefrence() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    double x = prefs.getDouble("NT.${widget.id}.x") ?? widget.initPositon.dx * widget.size;
+    double y = prefs.getDouble("NT.${widget.id}.y") ?? widget.initPositon.dy * widget.size;
+    setState(() {
+      positon = Offset(x, y);
+      width = prefs.getDouble("NT.${widget.id}.width") ?? widget.size;
+      height = prefs.getDouble("NT.${widget.id}.height") ?? widget.size;
+    });
+  }
+
+  void setPrefs(String attribute, double data) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setDouble("NT.${widget.id}.$attribute", data);
+  }
+
+  void updateId() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt("NT.id", widget.id);
   }
 
   @override
@@ -63,6 +91,8 @@ class _DraggableWidgetState extends State<DraggableWidget> {
               positon = Offset(x, y);
             });
             widget.whenPosChange.call(positon);
+            setPrefs("x", x);
+            setPrefs("y", y);
           },
           child: MouseRegion(
             cursor:
@@ -181,6 +211,9 @@ class _DraggableWidgetState extends State<DraggableWidget> {
           height = height.round() * widget.size;
         });
         widget.whenPosChange.call(positon);
+        setPrefs("x", positon.dx);
+        setPrefs("y", positon.dy);
+        setPrefs("width", width);
       },
       child: MouseRegion(
         cursor: switch ((area.x, area.y)) {

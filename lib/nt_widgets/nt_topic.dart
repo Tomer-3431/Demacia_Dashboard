@@ -9,7 +9,6 @@ class NtTopic {
     required this.directory,
     required this.type,
     required this.id,
-    required this.onDrop,
     required this.data,
     required this.size,
   });
@@ -19,7 +18,7 @@ class NtTopic {
   final Type type;
   final int id;
   final dynamic data;
-  final void Function(Offset position, NtTopic data) onDrop;
+  // final void Function(Offset position, NtTopic data) onDrop;
   final double size;
 
   Widget build(BuildContext context) => Draggable<NtTopic>(
