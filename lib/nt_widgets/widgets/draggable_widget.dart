@@ -34,9 +34,7 @@ class _DraggableWidgetState extends State<DraggableWidget> {
   void initState() {
     super.initState();
 
-    print(widget.id);
     updateId();
-    
     positon = widget.initPositon * widget.size;
     width = widget.size;
     height = widget.size;
@@ -45,6 +43,12 @@ class _DraggableWidgetState extends State<DraggableWidget> {
 
   void getFromPrefrence() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.setString("NT.${widget.id}.title", widget.child.title);
+    if (widget.child.topic != null) {
+      prefs.setInt("NT.${widget.id}.topic.id", widget.child.topic!.id);
+    }
+
     double x = prefs.getDouble("NT.${widget.id}.x") ?? widget.initPositon.dx * widget.size;
     double y = prefs.getDouble("NT.${widget.id}.y") ?? widget.initPositon.dy * widget.size;
     setState(() {
@@ -61,7 +65,9 @@ class _DraggableWidgetState extends State<DraggableWidget> {
 
   void updateId() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt("NT.id", widget.id);
+    if ((prefs.getInt("NT.id") ?? 2) < widget.id) {
+      prefs.setInt("NT.id", widget.id);
+    }
   }
 
   @override
@@ -214,6 +220,7 @@ class _DraggableWidgetState extends State<DraggableWidget> {
         setPrefs("x", positon.dx);
         setPrefs("y", positon.dy);
         setPrefs("width", width);
+        setPrefs("height", height);
       },
       child: MouseRegion(
         cursor: switch ((area.x, area.y)) {

@@ -27,13 +27,85 @@ class _NtScreenState extends State<NtScreen> {
   List<DraggableWidget> placedWidgets = [];
   Offset widgetPos = Offset(5, 5);
   int currentId = 0;
+  late List<NtTopic> topics;
 
   @override
   void initState() {
     super.initState();
 
+    topics = [
+      NtTopic(
+        name: "topic 1",
+        directory: "folder",
+        type: int,
+        id: 0,
+        data: 0.0,
+        size: widget.size,
+      ),
+      NtTopic(
+        name: "topic 2",
+        directory: "secondfolder/apple",
+        type: int,
+        id: 1,
+        data: 1.0,
+        size: widget.size,
+      ),
+      NtTopic(
+        name: "topic 3",
+        directory: "folder/apple",
+        type: int,
+        id: 2,
+        data: 2.0,
+        size: widget.size,
+      ),
+      NtTopic(
+        name: "topic 4",
+        directory: "folder/apple",
+        type: int,
+        id: 3,
+        data: 3.0,
+        size: widget.size,
+      ),
+    ];
+
     getCurrentId();
     getWidgetPos();
+    createWidgets();
+  }
+
+  void createWidgets() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    for (int i = currentId; i > 2; i--) {
+      double x = (prefs.getDouble("NT.$i.x") ?? 0) / widget.size;
+      double y = (prefs.getDouble("NT.$i.y") ?? 0) / widget.size;
+      setState(() {
+        placedWidgets.add(
+          DraggableWidget(
+            id: i,
+            size: widget.size,
+            initPositon: Offset(x, y),
+            child: NumberWidget(
+              title: prefs.getString("NT.$i.title") ?? "",
+              topic:
+                  (topics
+                          .where(
+                            (topic) =>
+                                topic.id == (prefs.getInt("NT.$i.topic.id") ?? 0),
+                          )
+                          .firstOrNull ??
+                      NtTopic(
+                        name: "error topic",
+                        directory: "error",
+                        type: double,
+                        id: -1,
+                        data: -1,
+                        size: widget.size,
+                      )),
+            ),
+          ),
+        );
+      });
+    }
   }
 
   void getWidgetPos() async {
@@ -50,6 +122,17 @@ class _NtScreenState extends State<NtScreen> {
     setState(() {
       currentId = prefs.getInt("NT.id") ?? 0;
     });
+  }
+
+  void removeWidgetsFromPrefs(int id) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove("NT.$id.x");
+    prefs.remove("NT.$id.y");
+    prefs.remove("NT.$id.width");
+    prefs.remove("NT.$id.height");
+    prefs.remove("NT.$id.topic.id");
+    prefs.remove("NT.$id.title");
+    prefs.setInt("NT.id", (prefs.getInt("NT.id") ?? 3) - 1);
   }
 
   @override
@@ -72,7 +155,8 @@ class _NtScreenState extends State<NtScreen> {
               id: 1,
               size: widget.size,
               initPositon: Offset(5, 5),
-              whenPosChange: (pos) => setState(() => widgetPos = pos / widget.size),
+              whenPosChange:
+                  (pos) => setState(() => widgetPos = pos / widget.size),
               child: NameWidget(
                 name: widgetPos.toString(),
                 size: widget.size,
@@ -83,11 +167,16 @@ class _NtScreenState extends State<NtScreen> {
             DraggableWidget(
               id: 2,
               size: widget.size,
-              initPositon: Offset(8, 2),
+              initPositon: Offset(2, 8),
               child: ButtonWidget(
                 title: "Clear Topic Widgets",
                 size: widget.size,
-                onTap: () => setState(() => placedWidgets = []),
+                onTap: () {
+                  for (DraggableWidget widget in placedWidgets) {
+                    removeWidgetsFromPrefs(widget.id);
+                  }
+                  setState(() => placedWidgets = []);
+                },
                 buttonName: "empty list",
               ),
             ),
@@ -110,8 +199,7 @@ class _NtScreenState extends State<NtScreen> {
                       initPositon: localPos,
                       size: widget.size,
                       child: NumberWidget(
-                        number: details.data.data,
-                        size: widget.size,
+                        topic: details.data,
                         title: details.data.name,
                       ),
                     ),
@@ -127,42 +215,7 @@ class _NtScreenState extends State<NtScreen> {
         ),
       ),
 
-      NtSidebar(
-        topics: [
-          NtTopic(
-            name: "topic 1",
-            directory: "folder",
-            type: int,
-            id: 0,
-            data: 0.0,
-            size: widget.size,
-          ),
-          NtTopic(
-            name: "topic 2",
-            directory: "secondfolder/apple",
-            type: int,
-            id: 1,
-            data: 1.0,
-            size: widget.size,
-          ),
-          NtTopic(
-            name: "topic 3",
-            directory: "folder/apple",
-            type: int,
-            id: 2,
-            data: 2.0,
-            size: widget.size,
-          ),
-          NtTopic(
-            name: "topic 4",
-            directory: "folder/apple",
-            type: int,
-            id: 3,
-            data: 3.0,
-            size: widget.size,
-          ),
-        ],
-      ),
+      NtSidebar(topics: topics),
     ],
   );
 

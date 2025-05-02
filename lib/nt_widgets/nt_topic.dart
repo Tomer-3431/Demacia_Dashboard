@@ -55,8 +55,7 @@ class NtTopic {
           Expanded(
             child: NumberWidget(
               title: name, 
-              number: data, 
-              size: size
+              topic: this,
             )
           ),
         ],

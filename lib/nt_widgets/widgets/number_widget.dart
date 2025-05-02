@@ -2,14 +2,10 @@ import 'package:demacia_dashboard/nt_widgets/widgets/nt_widget.dart';
 import 'package:flutter/material.dart';
 
 class NumberWidget extends NtWidget {
-  final double number;
-  final double size;
-
   const NumberWidget({
     super.key,
+    required super.topic,
     required super.title,
-    required this.number,
-    required this.size,
   });
 
   @override
@@ -23,13 +19,13 @@ class _NumberWidgetState extends State<NumberWidget> {
   void initState() {
     super.initState();
 
-    controller = TextEditingController(text: widget.number.toString());
+    controller = TextEditingController(text: widget.topic!.data.toString());
   }
 
   @override
   Widget build(BuildContext context) => Center(
     child: Text(
-      widget.number.toString(),
+      widget.topic!.data.toString(),
       textAlign: TextAlign.center,
       style: TextStyle(
         color: Colors.white,
