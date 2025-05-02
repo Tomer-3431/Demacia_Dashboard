@@ -24,10 +24,44 @@ class NtTopic {
 
   Widget build(BuildContext context) => Draggable<NtTopic>(
     data: this,
-    feedback: NumberWidget(
-      size: size, 
-      number: data,
-      title: name,
+    feedback: Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: Colors.grey[850],
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.purple,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+            ),
+            padding: EdgeInsets.all(4),
+            height: size * 0.3,
+            child: Center(
+              child: Text(
+                name,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: NumberWidget(
+              title: name, 
+              number: data, 
+              size: size
+            )
+          ),
+        ],
+      ),
     ),
     childWhenDragging: Opacity(
       opacity: 0.3,

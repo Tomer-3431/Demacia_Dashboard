@@ -85,7 +85,7 @@ class _NtSidebarState extends State<NtSidebar> {
 
     root.sort();
     return [
-      ...root.subFolders,
+      ...root.subFolders.map((subFolder) => subFolder.build(context)),
       ...root.files.map((file) => file.build(context)),
     ];
   }

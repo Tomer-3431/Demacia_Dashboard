@@ -2,6 +2,7 @@ import 'package:demacia_dashboard/nt_widgets/nt_topic.dart';
 import 'package:demacia_dashboard/nt_widgets/nt_sidebar/nt_sidebar.dart';
 import 'package:demacia_dashboard/nt_widgets/widgets/button_widget.dart';
 import 'package:demacia_dashboard/nt_widgets/widgets/draggable_widget.dart';
+import 'package:demacia_dashboard/nt_widgets/widgets/name_widget.dart';
 import 'package:demacia_dashboard/nt_widgets/widgets/number_widget.dart';
 import 'package:demacia_dashboard/utils/screen.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ class NtScreen extends Screen {
 
 class _NtScreenState extends State<NtScreen> {
   List<DraggableWidget> placedWidgets = [];
+  Offset widgetPos = Offset(5, 5);
 
   void handleDrop(Offset globalPosition, NtTopic data) {
     final RenderBox box = context.findRenderObject() as RenderBox;
@@ -67,8 +69,9 @@ class _NtScreenState extends State<NtScreen> {
             DraggableWidget(
               size: widget.size,
               initPositon: Offset(5, 5),
-              child: NumberWidget(
-                number: 20, 
+              whenPosChange: (pos) => setState(() => widgetPos = pos / widget.size),
+              child: NameWidget(
+                name: widgetPos.toString(),
                 size: widget.size,
                 title: "test",
               ),
@@ -78,9 +81,10 @@ class _NtScreenState extends State<NtScreen> {
               size: widget.size,
               initPositon: Offset(2, 8),
               child: ButtonWidget(
+                title: "Clear Topic Widgets",
                 size: widget.size,
                 onTap: () => setState(() => placedWidgets = []),
-                name: "empty list",
+                buttonName: "empty list",
               ),
             ),
 

@@ -1,17 +1,22 @@
+import 'package:demacia_dashboard/nt_widgets/widgets/nt_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class DraggableWidget extends StatefulWidget {
   final double size;
   final Offset initPositon;
-  final Widget child;
+  final NtWidget child;
+  final void Function(Offset pos) whenPosChange;
 
   const DraggableWidget({
     super.key,
     required this.size,
     required this.initPositon,
     required this.child,
+    this.whenPosChange = _default,
   });
+
+  static void _default(Offset pos) {}
 
   @override
   State<DraggableWidget> createState() => _DraggableWidgetState();
@@ -40,25 +45,61 @@ class _DraggableWidgetState extends State<DraggableWidget> {
         width: width,
         height: height,
         child: GestureDetector(
-          onPanUpdate: (details) => setState(() {
-            isGrabbing = true;
-            positon += details.delta;
-          }),
-          onPanEnd:
-            (details) {
-              positon /= widget.size;
-              double x = positon.dx.round() * widget.size;
-              double y = positon.dy.round() * widget.size;
-              x = x.clamp(0, 15 * widget.size);
-              y = y.clamp(0, 9 * widget.size);
-              setState(() {
-                isGrabbing = false;
-                positon = Offset(x, y);
-              });
-            },
+          onPanUpdate: (details) {
+            setState(() {
+              isGrabbing = true;
+              positon += details.delta;
+            });
+            widget.whenPosChange.call(positon);
+          },
+          onPanEnd: (details) {
+            positon /= widget.size;
+            double x = positon.dx.round() * widget.size;
+            double y = positon.dy.round() * widget.size;
+            x = x.clamp(0, 15 * widget.size);
+            y = y.clamp(0, 9 * widget.size);
+            setState(() {
+              isGrabbing = false;
+              positon = Offset(x, y);
+            });
+            widget.whenPosChange.call(positon);
+          },
           child: MouseRegion(
-            cursor: isGrabbing ? SystemMouseCursors.allScroll : MouseCursor.defer,
-            child: widget.child
+            cursor:
+                isGrabbing ? SystemMouseCursors.allScroll : MouseCursor.defer,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[850],
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.purple,
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(16),
+                      ),
+                    ),
+                    padding: EdgeInsets.all(4),
+                    height: widget.size * 0.3,
+                    child: Center(
+                      child: Text(
+                        widget.child.title,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(child: widget.child),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -70,28 +111,33 @@ class _DraggableWidgetState extends State<DraggableWidget> {
       getMouseArea(Alignment.bottomCenter),
       getMouseArea(Alignment.bottomLeft),
       getMouseArea(Alignment.centerLeft),
-    ]
+    ],
   );
 
   Positioned getMouseArea(Alignment area) => Positioned(
-    left: positon.dx + switch (area.x) {
-      -1 => 0,
-      0 => 16,
-      1 => width - 16,
-      _ => 0,
-    },
-    top: positon.dy + switch (area.y) {
-      -1 => 0,
-      0 => 16,
-      1 => height - 16,
-      _ => 0,
-    },
+    left:
+        positon.dx +
+        switch (area.x) {
+          -1 => 0,
+          0 => 16,
+          1 => width - 16,
+          _ => 0,
+        },
+    top:
+        positon.dy +
+        switch (area.y) {
+          -1 => 0,
+          0 => 16,
+          1 => height - 16,
+          _ => 0,
+        },
     child: GestureDetector(
       onPanUpdate: (details) {
         width += details.delta.dx * area.x;
         height += details.delta.dy * area.y;
         setState(() {
-          if (((width <= 0.6 * widget.size) && area.y != 0) || ((height <= 0.6 * widget.size) && area.x != 0)) {
+          if (((width <= 0.6 * widget.size) && area.y != 0) ||
+              ((height <= 0.6 * widget.size) && area.x != 0)) {
             if ((width <= 0.6 * widget.size) && (height <= 0.6 * widget.size)) {
               width = 0.6 * widget.size;
               height = 0.6 * widget.size;
@@ -105,12 +151,21 @@ class _DraggableWidgetState extends State<DraggableWidget> {
               positon += Offset(details.delta.dx, 0);
             }
           } else {
-            positon = Offset(positon.dx + (area.x == -1 && width > widget.size * 0.6 ? (details.delta.dx) : 0), 
-            positon.dy + (area.y == -1 && height > widget.size * 0.6 ? (details.delta.dy ) : 0));
+            positon = Offset(
+              positon.dx +
+                  (area.x == -1 && width > widget.size * 0.6
+                      ? (details.delta.dx)
+                      : 0),
+              positon.dy +
+                  (area.y == -1 && height > widget.size * 0.6
+                      ? (details.delta.dy)
+                      : 0),
+            );
             width = width.clamp(0.6 * widget.size, double.infinity);
             height = height.clamp(0.6 * widget.size, double.infinity);
-          } 
+          }
         });
+        widget.whenPosChange.call(positon);
       },
       onPanEnd: (details) {
         positon /= widget.size;
@@ -125,6 +180,7 @@ class _DraggableWidgetState extends State<DraggableWidget> {
           width = width.round() * widget.size;
           height = height.round() * widget.size;
         });
+        widget.whenPosChange.call(positon);
       },
       child: MouseRegion(
         cursor: switch ((area.x, area.y)) {
@@ -139,13 +195,13 @@ class _DraggableWidgetState extends State<DraggableWidget> {
             -1 => 16,
             0 => (width - 32).clamp(0, double.infinity),
             1 => 16,
-            _ => 16
+            _ => 16,
           },
           height: switch (area.y) {
             -1 => 16,
             0 => (height - 32).clamp(0, double.infinity),
             1 => 16,
-            _ => 16
+            _ => 16,
           },
         ),
       ),

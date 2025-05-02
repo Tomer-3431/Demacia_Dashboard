@@ -1,21 +1,23 @@
 import 'package:demacia_dashboard/nt_widgets/nt_topic.dart';
 import 'package:flutter/material.dart';
 
-class Folder extends StatelessWidget {
+class Folder {
   final String name;
   final int spaces;
 
   List<Folder> subFolders = [];
   List<NtTopic> files = [];
 
-  Folder({super.key, required this.name, this.spaces = 0});
+  Folder({
+    required this.name, 
+    this.spaces = 0
+  });
 
   void sort() {
     subFolders.sort((a, b) => a.name.compareTo(b.name));
     files.sort((a, b) => a.name.compareTo(b.name));
   }
 
-  @override
   Widget build(BuildContext context) {
     sort();
 
@@ -23,7 +25,7 @@ class Folder extends StatelessWidget {
       title: name,
       spaces: spaces,
       children: [
-        ...subFolders,
+        ...subFolders.map((Folder subFolder) => subFolder.build(context)),
         ...files.map((NtTopic file) => file.build(context)),
       ],
     );

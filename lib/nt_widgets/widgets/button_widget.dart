@@ -1,47 +1,41 @@
+import 'package:demacia_dashboard/nt_widgets/widgets/nt_widget.dart';
 import 'package:flutter/material.dart';
 
-class ButtonWidget extends StatelessWidget {
+class ButtonWidget extends NtWidget {
   final void Function() onTap;
-  final String name;
+  final String buttonName;
   final double size;
 
   const ButtonWidget({
     super.key,
+    required super.title,
     required this.onTap,
-    required this.name,
+    required this.buttonName,
     this.size = 50,
   });
 
   @override
-  Widget build(BuildContext context) => Container(
-    decoration: BoxDecoration(
-      color: Colors.grey[850],
-      borderRadius: BorderRadius.circular(16),
-    ),
-    height: size,
-    width: size,
-    child: GestureDetector(
-      onTap: onTap,
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: Center(
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.purple,
-                width: 1.5,
-              ),
-              borderRadius: BorderRadius.circular(32),
-            ),
-            width: size * 0.85,
-            height: size * 0.45,
-            child: Center(
-              child: Text(
-                name, 
-                style: TextStyle(
-                  color: Colors.white
-                )
-              )
+  State<StatefulWidget> createState() => _ButtonWidgetState();
+}
+
+class _ButtonWidgetState extends State<ButtonWidget> {
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+    onTap: widget.onTap,
+    child: MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: Center(
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.purple, width: 1.5),
+            borderRadius: BorderRadius.circular(32),
+          ),
+          width: widget.size * 0.85,
+          height: widget.size * 0.45,
+          child: Center(
+            child: Text(
+              widget.buttonName,
+              style: TextStyle(color: Colors.white),
             ),
           ),
         ),
