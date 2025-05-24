@@ -3,7 +3,6 @@ import 'package:demacia_dashboard/nt_widgets/nt_sidebar/nt_sidebar.dart';
 import 'package:demacia_dashboard/nt_widgets/widgets/button_widget.dart';
 import 'package:demacia_dashboard/nt_widgets/widgets/draggable_widget.dart';
 import 'package:demacia_dashboard/nt_widgets/widgets/name_widget.dart';
-import 'package:demacia_dashboard/nt_widgets/widgets/number_widget.dart';
 import 'package:demacia_dashboard/utils/screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,7 +16,7 @@ class NtScreen extends Screen {
         screenName: "Network Tables",
       );
 
-  final double size = 96;
+  static const double size = 96;
 
   @override
   State<NtScreen> createState() => _NtScreenState();
@@ -40,7 +39,7 @@ class _NtScreenState extends State<NtScreen> {
         type: int,
         id: 0,
         data: 0.0,
-        size: widget.size,
+        size: NtScreen.size,
       ),
       NtTopic(
         name: "topic 2",
@@ -48,7 +47,7 @@ class _NtScreenState extends State<NtScreen> {
         type: int,
         id: 1,
         data: 1.0,
-        size: widget.size,
+        size: NtScreen.size,
       ),
       NtTopic(
         name: "topic 3",
@@ -56,15 +55,23 @@ class _NtScreenState extends State<NtScreen> {
         type: int,
         id: 2,
         data: 2.0,
-        size: widget.size,
+        size: NtScreen.size,
       ),
       NtTopic(
         name: "topic 4",
         directory: "folder/apple",
-        type: int,
+        type: String,
         id: 3,
-        data: 3.0,
-        size: widget.size,
+        data: "abc",
+        size: NtScreen.size,
+      ),
+      NtTopic(
+        name: "topic 5",
+        directory: "folder",
+        type: bool,
+        id: 4,
+        data: true,
+        size: NtScreen.size,
       ),
     ];
 
@@ -76,32 +83,31 @@ class _NtScreenState extends State<NtScreen> {
   void createWidgets() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     for (int i = currentId; i > 2; i--) {
-      double x = (prefs.getDouble("NT.$i.x") ?? 0) / widget.size;
-      double y = (prefs.getDouble("NT.$i.y") ?? 0) / widget.size;
+      double x = (prefs.getDouble("NT.$i.x") ?? 0) / NtScreen.size;
+      double y = (prefs.getDouble("NT.$i.y") ?? 0) / NtScreen.size;
       setState(() {
         placedWidgets.add(
           DraggableWidget(
             id: i,
-            size: widget.size,
+            size: NtScreen.size,
             initPositon: Offset(x, y),
-            child: NumberWidget(
-              title: prefs.getString("NT.$i.title") ?? "",
-              topic:
-                  (topics
-                          .where(
-                            (topic) =>
-                                topic.id == (prefs.getInt("NT.$i.topic.id") ?? 0),
-                          )
-                          .firstOrNull ??
-                      NtTopic(
-                        name: "error topic",
-                        directory: "error",
-                        type: double,
-                        id: -1,
-                        data: -1,
-                        size: widget.size,
-                      )),
-            ),
+            child:
+                (topics
+                            .where(
+                              (topic) =>
+                                  topic.id ==
+                                  (prefs.getInt("NT.$i.topic.id") ?? 0),
+                            )
+                            .firstOrNull ??
+                        NtTopic(
+                          name: "error topic",
+                          directory: "error",
+                          type: double,
+                          id: -1,
+                          data: -1,
+                          size: NtScreen.size,
+                        ))
+                    .getWidget(),
           ),
         );
       });
@@ -110,10 +116,10 @@ class _NtScreenState extends State<NtScreen> {
 
   void getWidgetPos() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    double x = prefs.getDouble("NT.1.x") ?? 5 * widget.size;
-    double y = prefs.getDouble("NT.1.y") ?? 5 * widget.size;
+    double x = prefs.getDouble("NT.1.x") ?? 5 * NtScreen.size;
+    double y = prefs.getDouble("NT.1.y") ?? 5 * NtScreen.size;
     setState(() {
-      widgetPos = Offset(x, y) / widget.size;
+      widgetPos = Offset(x, y) / NtScreen.size;
     });
   }
 
@@ -143,34 +149,30 @@ class _NtScreenState extends State<NtScreen> {
           children: [
             CustomPaint(
               painter: GridPainter(
-                gridSize: widget.size,
+                gridSize: NtScreen.size,
                 lineColor: Colors.deepPurple,
                 lineThickness: 1,
               ),
               size: MediaQuery.sizeOf(context),
             ),
-            ...rowAndColumnsNumbers(context, widget.size),
+            ...rowAndColumnsNumbers(context, NtScreen.size),
 
             DraggableWidget(
               id: 1,
-              size: widget.size,
+              size: NtScreen.size,
               initPositon: Offset(5, 5),
               whenPosChange:
-                  (pos) => setState(() => widgetPos = pos / widget.size),
-              child: NameWidget(
-                name: widgetPos.toString(),
-                size: widget.size,
-                title: "test",
-              ),
+                  (pos) => setState(() => widgetPos = pos / NtScreen.size),
+              child: NameWidget(name: widgetPos.toString(), title: "test"),
             ),
 
             DraggableWidget(
               id: 2,
-              size: widget.size,
+              size: NtScreen.size,
               initPositon: Offset(2, 8),
               child: ButtonWidget(
                 title: "Clear Topic Widgets",
-                size: widget.size,
+                size: NtScreen.size,
                 onTap: () {
                   for (DraggableWidget widget in placedWidgets) {
                     removeWidgetsFromPrefs(widget.id);
@@ -186,7 +188,7 @@ class _NtScreenState extends State<NtScreen> {
               onAcceptWithDetails: (details) {
                 final RenderBox box = context.findRenderObject() as RenderBox;
                 Offset localPos = box.globalToLocal(details.offset);
-                localPos /= widget.size;
+                localPos /= NtScreen.size;
                 localPos = Offset(
                   localPos.dx.round().toDouble().clamp(0, 14),
                   localPos.dy.round().toDouble().clamp(0, 8),
@@ -197,11 +199,8 @@ class _NtScreenState extends State<NtScreen> {
                     DraggableWidget(
                       id: ++currentId,
                       initPositon: localPos,
-                      size: widget.size,
-                      child: NumberWidget(
-                        topic: details.data,
-                        title: details.data.name,
-                      ),
+                      size: NtScreen.size,
+                      child: details.data.getWidget(),
                     ),
                   );
                 });
@@ -223,12 +222,12 @@ class _NtScreenState extends State<NtScreen> {
     List<Positioned> positionedList = [];
     for (
       int i = 0;
-      i < (MediaQuery.sizeOf(context).height / widget.size);
+      i < (MediaQuery.sizeOf(context).height / NtScreen.size);
       i++
     ) {
       for (
         int j = 0;
-        j < (MediaQuery.sizeOf(context).width / widget.size);
+        j < (MediaQuery.sizeOf(context).width / NtScreen.size);
         j++
       ) {
         positionedList.add(

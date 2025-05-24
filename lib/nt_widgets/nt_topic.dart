@@ -1,3 +1,6 @@
+import 'package:demacia_dashboard/nt_widgets/widgets/boolean_widget.dart';
+import 'package:demacia_dashboard/nt_widgets/widgets/name_widget.dart';
+import 'package:demacia_dashboard/nt_widgets/widgets/nt_widget.dart';
 import 'package:demacia_dashboard/nt_widgets/widgets/number_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -53,10 +56,7 @@ class NtTopic {
             ),
           ),
           Expanded(
-            child: NumberWidget(
-              title: name, 
-              topic: this,
-            )
+            child: getWidget(),
           ),
         ],
       ),
@@ -71,6 +71,29 @@ class NtTopic {
       title: Text(name, textDirection: TextDirection.rtl, style: TextStyle()),
     ),
   );
+
+
+  NtWidget getWidget() {
+    return switch (type) {
+      double || int => 
+        NumberWidget(
+          title: name, 
+          topic: this,
+        ),
+      String => 
+        NameWidget(
+          title: name, 
+          name: data, 
+        ),
+      bool => 
+        BooleanWidget(
+          title: name, 
+          topic: this,
+        ),
+      // TODO: Handle this case.
+      Type() => throw UnimplementedError(),
+    };
+  }
 
   Color getColorByType() {
     return switch (type) {

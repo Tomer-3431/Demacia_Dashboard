@@ -23,15 +23,19 @@ class _NumberWidgetState extends State<NumberWidget> {
   }
 
   @override
-  Widget build(BuildContext context) => Center(
-    child: Text(
-      widget.topic!.data.toString(),
-      textAlign: TextAlign.center,
-      style: TextStyle(
-        color: Colors.white,
-        fontWeight: FontWeight.normal,
-        fontSize: 14,
-        decoration: TextDecoration.none,
+  Widget build(BuildContext context) => SizedBox(
+    width: widget.size,
+    height: widget.size,
+    child: Center(
+      child: Text(
+        widget.topic!.data.toString(),
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.normal,
+          fontSize: 14,
+          decoration: TextDecoration.none,
+        ),
       ),
     ),
   );
