@@ -23,39 +23,36 @@ class _NtSidebarState extends State<NtSidebar> {
 
   @override
   Widget build(BuildContext context) => Container(
-    width: isOpen ? 300 : 50,
-    decoration: BoxDecoration(
-      color: Colors.purpleAccent.shade100,
-      borderRadius: const BorderRadiusDirectional.horizontal(
-        end: Radius.circular(8),
-      ).resolve(TextDirection.rtl),
-    ),
-
-    child:
-        isOpen
+        width: isOpen ? 300 : 50,
+        decoration: BoxDecoration(
+          color: Colors.purpleAccent.shade100,
+          borderRadius: const BorderRadiusDirectional.horizontal(
+            end: Radius.circular(8),
+          ).resolve(TextDirection.rtl),
+        ),
+        child: isOpen
             ? Column(
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(children: getTopics(Folder(name: "root"))),
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(children: getTopics(Folder(name: ""))),
+                    ),
+                  ),
+                  ListTile(
+                    title: Icon(Icons.keyboard_double_arrow_right),
+                    onTap: () => setState(() => isOpen = !isOpen),
+                  ),
+                ],
+              )
+            : Center(
+                child: Expanded(
+                  child: ListTile(
+                    title: Icon(Icons.keyboard_double_arrow_left),
+                    onTap: () => setState(() => isOpen = !isOpen),
                   ),
                 ),
-
-                ListTile(
-                  title: Icon(Icons.keyboard_double_arrow_right),
-                  onTap: () => setState(() => isOpen = !isOpen),
-                ),
-              ],
-            )
-            : Center(
-              child: Expanded(
-                child: ListTile(
-                  title: Icon(Icons.keyboard_double_arrow_left),
-                  onTap: () => setState(() => isOpen = !isOpen),
-                ),
               ),
-            ),
-  );
+      );
 
   List<Widget> getTopics(Folder root) {
     for (NtTopic topic in widget.topics) {
@@ -65,10 +62,9 @@ class _NtSidebarState extends State<NtSidebar> {
 
       for (int i = 0; i < parts.length; i++) {
         final String part = parts[i];
-        final Folder? folderIfExisting =
-            current.subFolders
-                .where((Folder folder) => folder.name == part)
-                .firstOrNull;
+        final Folder? folderIfExisting = current.subFolders
+            .where((Folder folder) => folder.name == part)
+            .firstOrNull;
 
         if (folderIfExisting != null) {
           current = folderIfExisting;

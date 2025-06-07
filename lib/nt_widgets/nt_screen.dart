@@ -37,7 +37,6 @@ class _NtScreenState extends State<NtScreen> {
   void initState() {
     super.initState();
     nt4Connection = widget.nt4;
-    nt4Connection.testSub(topics);
     initializeAsync();
   }
 
@@ -64,19 +63,18 @@ class _NtScreenState extends State<NtScreen> {
   }
 
   Future<void> _initializeNetworkConnections() async {
-    // Add a small delay to ensure the NT4 client is ready
-    await Future.delayed(Duration(milliseconds: 100));
-
     // Test connection first
     nt4Connection.testConnection();
 
     // Wait a bit more before starting topic subscription
     await Future.delayed(Duration(milliseconds: 500));
 
+    nt4Connection.testSub(topics);
+    nt4Connection.d();
+
     // Start topic fetching
     nt4Connection.fetchTopics(topics, (updatedTopics) {
       if (mounted) {
-        // Check if widget is still mounted
         setState(() {
           topics = updatedTopics;
         });

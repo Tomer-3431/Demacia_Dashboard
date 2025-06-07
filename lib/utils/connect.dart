@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:demacia_dashboard/nt_widgets/nt_topic.dart';
-import 'package:nt4/nt4.dart';
+import 'package:demacia_dashboard/nt_widgets/widgets/boolean_widget.dart';
+import 'package:demacia_dashboard/utils/client.dart';
 
 class Connect {
   late NT4Client client;
@@ -23,18 +26,13 @@ class Connect {
     );
   }
 
-  void sendData() {
-    if (!isConnected) {
-      print('Cannot send data: Client not connected');
-      return;
-    }
-
-    try {
-      NT4Topic testPub =
-          client.publishNewTopic('/SmartDashboard/Second', NT4TypeStr.typeStr);
-      client.addSample(testPub, 'WORK??');
-    } catch (e) {
-      print('Error sending data: $e');
+  void d() async {
+    NT4Topic? topic = client.getTopicFromName('/SmartDashboard/field/Robot');
+    if (topic != null) {
+      print(topic.name);
+      print('topic not null');
+    } else {
+      print('topic is null');
     }
   }
 
@@ -42,56 +40,107 @@ class Connect {
     NT4Topic testPub =
         client.publishNewTopic('/SmartDashboard/Second', NT4TypeStr.typeStr);
     client.addSample(testPub, 'WORK??');
+
+    NT4Topic tester =
+        client.publishNewTopic('/SmartDashboard/Third', NT4TypeStr.typeInt);
+    client.addSample(tester, 5);
+
+    NT4Topic boolT =
+        client.publishNewTopic('/SmartDashboard/Bool', NT4TypeStr.typeBool);
+    client.addSample(boolT, true);
+
+    NT4Topic jsonTest =
+        client.publishNewTopic('/SmarthDasbboard/json', NT4TypeStr.typeStr);
+    Map<String, dynamic> object = {
+      'Sarah': 15,
+      'Test': 29,
+      'Ver': 111,
+    };
+
+    String json = jsonEncode(object);
+    client.addSample(jsonTest, json);
+
+    NT4Topic? outSideTopic = client.getTopicFromName('outSideTopic');
+
+    if (outSideTopic != null) {
+      print("topic isnt null");
+    } else {
+      print('nulllll!');
+    }
   }
 
-  void sendDatas(String name, Type data, Object value) {
+  void testSub(List<NtTopic> topics) async {
+    NT4Subscription sub = client.subscribePeriodic('/SmartDashboard/Third');
+
+    sub.listen((data) {
+      topics.add(NtTopic(
+          name: 'Th',
+          directory: extractDirectory('/SmartDashboard/Third'),
+          type: getType(data),
+          id: generateId(),
+          data: data,
+          size: 5.0));
+    });
+
+    NT4Subscription t = client.subscribePeriodic('/SmartDashboard/Second');
+    t.listen((data) {
+      topics.add(NtTopic(
+          name: 'Se',
+          directory: extractDirectory('/SmartDashboard/Second'),
+          type: getType(data),
+          id: generateId(),
+          data: data,
+          size: 5));
+    });
+
+    NT4Subscription s = client.subscribePeriodic('/SmarthDasbboard/Second');
+    NT4Topic? tpc = client.getTopicFromName(s.topic);
+    String sTopic = s.topic;
+    print('topic: $sTopic');
+
+    NT4Subscription workSub = client.subscribePeriodic('/SmarthDasbboard/json');
+
+    workSub.listen((data) {
+      topics.add(NtTopic(
+          name: 'Name!',
+          directory: extractDirectory('/SmartDashboard/json'),
+          type: getType(data),
+          id: generateId(),
+          data: data,
+          size: 5.0));
+    });
+
+    // NT4Subscription bs = client.subscribePeriodic('/SmartDashboard/Bool');
+    // bs.listen((data) {
+    //   if (getType(data) == bool) {
+    //     topics.add(BooleanWidget(title: 'Bool', topic: client.getTopicFromName(bs.topic)));
+    //   }
+    //   topics.add(NtTopic(
+    //       name: 'Bool',
+    //       directory: extractDirectory('/SmartDashboard/Bool'),
+    //       type: getType(data),
+    //       id: generateId(),
+    //       data: data,
+    //       size: 5.0));
+    // });
+  }
+
+  Type getType(dynamic value) {
+    if (value == null) {
+      return Null;
+    }
+    print(value.runtimeType);
+    return value.runtimeType;
+  }
+
+  void sendDatas(String name, String type, Object value) {
     if (!isConnected) {
       print('Cannot send data: Client not connected');
       return;
     }
 
-    try {
-      late NT4Topic testPub;
-
-      switch (data) {
-        case const (int):
-          testPub = client.publishNewTopic(
-              '/SmartDashboard/$name', NT4TypeStr.typeInt);
-
-        case const (String):
-          testPub = client.publishNewTopic(
-              '/SmartDashboard/$name', NT4TypeStr.typeStr);
-
-        case const (double):
-          testPub = client.publishNewTopic(
-              '/SmartDashboard/$name', NT4TypeStr.typeFloat64);
-
-        case const (bool):
-          testPub = client.publishNewTopic(
-              '/SmartDashboard/$name', NT4TypeStr.typeBool);
-
-        default:
-          testPub = client.publishNewTopic(
-              '/SmartDashboard/$name', NT4TypeStr.typeStr);
-      }
-
-      client.addSample(testPub, value);
-    } catch (e) {
-      print('Error sending data for $name: $e');
-    }
-  }
-
-  void testSub(List<NtTopic> topics) async {
-    NT4Subscription sub = client.subscribePeriodic('/SmartDashboard/name');
-    sub.listen((data) {
-      topics.add(NtTopic(
-          name: 'name',
-          directory: extractDirectory('/SmartDashboard/name'),
-          type: getType(data as String),
-          id: generateId(),
-          data: data,
-          size: 5.0));
-    });
+    NT4Topic topic = client.publishNewTopic('/SmartDashboard/$name', type);
+    client.addSample(topic, value);
   }
 
   void getData(String data, Function(String) callback) async {
@@ -235,31 +284,6 @@ class Connect {
       return fullPath.substring(lastSlash + 1);
     }
     return fullPath;
-  }
-
-  Type getType(String type) {
-    switch (type.toLowerCase()) {
-      case 'int':
-      case 'integer':
-        return int;
-
-      case 'double':
-      case 'float':
-      case 'float64':
-        return double;
-
-      case 'bool':
-      case 'boolean':
-        return bool;
-
-      case 'string':
-      case 'str':
-        return String;
-
-      default:
-        print('Unknown type: $type, defaulting to String');
-        return String;
-    }
   }
 
   void testConnection() {

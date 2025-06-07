@@ -50,6 +50,8 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     nt4Connection = Connect();
+    nt4Connection.data();
+    add();
     screens = <Screen>[
       HomePage(),
       NtScreen(nt4Connection),
@@ -59,17 +61,20 @@ class _HomeState extends State<Home> {
     getScreenToPrevios();
   }
 
+  void add() {
+    nt4Connection.sendDatas('arr', "List<int>", [1, 2, 3, 4, 5, 6]);
+  }
+
   void initConnection() async {
-    await Future.delayed(Duration.zero);
-    try {
-      nt4Connection.sendData();
-      nt4Connection.sendDatas('name', String, 'value');
-      nt4Connection.sendDatas('hi', int, 5);
-      nt4Connection.sendDatas('double', double, 5.5);
-      print('added');
-    } catch (e) {
-      print('Failed to connect: $e');
-    }
+    await Future.delayed(Duration(seconds: 1));
+    // try {
+    //   nt4Connection.sendDatas('name', "String", 'value');
+    //   nt4Connection.sendDatas('hi', "int", 5);
+    //   nt4Connection.sendDatas('double', "double", 5.5);
+    //   //print('added');
+    // } catch (e) {
+    //   print('Failed to connect: $e');
+    // }
   }
 
   Future<void> getScreenToPrevios() async {
